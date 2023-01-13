@@ -3,8 +3,30 @@ import java.io.Console;
 import oraclewithjava.*;
 import spaceship.*;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
+
 public class Inventory {
     public static void main(String[] args) {
+        Connection conn3 = null;
+        try{
+            Properties parameters = new Properties();
+            parameters.put("user", oraclewithjava.Properties.DATABASE_USER);
+            parameters.put("password", oraclewithjava.Properties.DATABASE_PASSWORD);
+ 
+            //conn3 = DriverManager.getConnection(dbURL3, parameters);
+            conn3 = DriverManager.getConnection(oraclewithjava.Properties.DATABASE_URL, parameters);
+            if (conn3 != null) {
+                System.out.println("Connected to database #3");
+            }
+ 
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }       
+        /*
         Shuttle saturnoV = new Shuttle();
         saturnoV.setCapacity(118000.0);
         saturnoV.setEngines(2);
@@ -36,5 +58,6 @@ public class Inventory {
             System.out.println("Introduzca una opcion");
             option = console.readLine().toUpperCase().charAt(0);
         }
+        */
     }
 }
