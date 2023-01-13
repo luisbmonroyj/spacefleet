@@ -16,6 +16,5 @@ public interface Properties {
     final static String DATABASE_NAME = "postgres";
     final static String DATABASE_URL= "jdbc:"+oraclewithjava.Properties.RDBMS_NAME+"://localhost:5432/"+oraclewithjava.Properties.DATABASE_NAME;
     final static String DATABASE_USER = "postgres";//sys, whatever user 
-    final static String DATABASE_PASSWORD = "Honda*YDP49D"; //Always use a strong password
-    final static String DATABASE_DRIVER = "oracle.jdbc.driver.OracleDriver";
+    final static String DATABASE_PASSWORD = "strong"; //Always use a strong password
 }
