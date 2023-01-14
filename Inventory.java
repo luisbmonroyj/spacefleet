@@ -60,6 +60,17 @@ public class Inventory {
         System.out.println("Empuje de PioneerX: "+pioneerX.getThrust()+" kg");
         System.out.println("masa de MarinerX: "+ marinerX.getMass()+" kg");
         //System.out.println("Introduzca una opcion");
+
+        /*
+        Shuttle transbordador = new Shuttle();
+        transbordador.setCapacity(118000.0);
+        transbordador.setEngines(2);
+        transbordador.setThrust(3500000.0);
+        transbordador.setMass(2900000);
+        String shuttleCSV = "'transbordador',"+transbordador.getCapacity()+","+transbordador.getEngines()+","+transbordador.getThrust()+","+transbordador.getMass();
+        System.out.println(values);        
+        */
+        
         */
         char option = 'A';
         while (option != 'X'){
@@ -130,15 +141,6 @@ public class Inventory {
                 values+=",";
             }
         }
-        /*
-        Shuttle transbordador = new Shuttle();
-        transbordador.setCapacity(118000.0);
-        transbordador.setEngines(2);
-        transbordador.setThrust(3500000.0);
-        transbordador.setMass(2900000);
-        String shuttleCSV = "'transbordador',"+transbordador.getCapacity()+","+transbordador.getEngines()+","+transbordador.getThrust()+","+transbordador.getMass();
-        System.out.println(values);        
-        */
         controller.insertValues(table, columns, values);
         controller.desconectar();
         
