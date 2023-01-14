@@ -9,11 +9,17 @@ public class Satellite extends SpaceShip{
     
     //constructors
     public Satellite(){}
-    public Satellite (double mass){//,double capacity,double thrust){
+    public Satellite (String name,double mass){//,double capacity,double thrust){
+        setName(name);
         setMass(mass);
         //setCapacity(capacity);
         //setThrust(thrust);
         //setEngines(0);
+    }
+    @overriding
+    public String toCSV() {
+        String csv = "'"+this.getName()+"',"+this.getMass();
+        return csv;
     }
 
 

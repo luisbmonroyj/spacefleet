@@ -2,6 +2,7 @@ package spaceship;
 
 public abstract class SpaceShip implements Movement{
     //properties variables
+    String nombre;
     double masa;
     double capacidad;
     double empuje;
@@ -18,6 +19,10 @@ public abstract class SpaceShip implements Movement{
     double zRotation;
 
     //setters
+    //name must be a string
+    public void setName(String name){
+        nombre =  name;
+    }
     //mass must be in kilograms
     public void setMass (double mass){
         masa = mass;
@@ -35,6 +40,9 @@ public abstract class SpaceShip implements Movement{
         motores = engines;
     }
     //getters
+    public String getName(){
+        return nombre;
+    }
     public double getMass (){
         return masa;
     }
@@ -67,6 +75,11 @@ public abstract class SpaceShip implements Movement{
                 zRotation+=twist;
                 break;
         }
+    }
+    //this method delivers the values for the persistent layer
+    public String toCSV() {
+        String csv = "'"+this.getName()+"',"+this.getMass()+","+this.getCapacity()+","+this.getThrust()+","+this.getEngines();
+        return csv;
     }
 
     /*

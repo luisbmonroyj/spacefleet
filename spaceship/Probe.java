@@ -9,7 +9,8 @@ public class Probe extends SpaceShip{
     
     //constructors
     public Probe(){}
-    public Probe (double mass,double capacity,double thrust,int engines){
+    public Probe (String name, double mass,double capacity,double thrust,int engines){
+        setName(name);
         setMass(mass);
         setCapacity(capacity);
         setThrust(thrust);

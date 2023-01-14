@@ -1,14 +1,13 @@
 //package naveespacial;
 import java.io.Console;
 import oraclewithjava.*;
-/*
+
 import spaceship.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-*/
 
 public class Inventory {
     static Console console = System.console();
@@ -98,6 +97,7 @@ public class Inventory {
     public static void createShip(){
         char create = 'A';
         while (create != 'X'){
+            String columns = "name,mass,capacity,thrust,engines";
             System.out.println("Enter a number according to your option:");
             System.out.println("1. Create a shuttle");    
             System.out.println("2. Create a Probe");    
@@ -108,30 +108,56 @@ public class Inventory {
             create = console.readLine().toUpperCase().charAt(0);
             switch (create){
                 case '1':
-                    create("spacefleet.shuttle", "shuttle_name,mass,capacity,engines,thrust");
+                    String[] values = createSpaceShip(columns);
+                    Shuttle shuttle = new Shuttle(values[0],Double.parseDouble(values[1]),Double.parseDouble(values[2]),Double.parseDouble(values[3]),Integer.parseInt(values[4]));
+                    if (shuttle != null)
+                        create("spacefleet.shuttle", columns,shuttle);
                     break;
                 case '2':
-                    create("spacefleet.probe","probe_name,mass,capacity,engines,thrust");
+                    values = createSpaceShip(columns);
+                    Probe probe = new Probe(values[0],Double.parseDouble(values[1]),Double.parseDouble(values[2]),Double.parseDouble(values[3]),Integer.parseInt(values[4]));
+                    if (probe != null)
+                        create("spacefleet.probe",columns,probe);
                     break;
                 case '3':
-                    create("spacefleet.spacecraft","spacecraft_name,mass,capacity,engines,thrust");
+                    values = createSpaceShip(columns);
+                    SpaceCraft craft = new SpaceCraft(values[0],Double.parseDouble(values[1]),Double.parseDouble(values[2]),Double.parseDouble(values[3]),Integer.parseInt(values[4]));
+                    if (craft != null)
+                        create("spacefleet.spacecraft",columns,craft);
                     break;
                 case '4':
-                    create("spacefleet.satellite","satellite_name,mass");
+                    columns = "name,mass";
+                    String satelliteValues[] = createSpaceShip(columns);
+                    Satellite satellite = new Satellite(satelliteValues[0],Double.parseDouble(satelliteValues[1]));
+                    if (satellite != null)
+                        create("spacefleet.satellite",columns, satellite);
                     break;
                 default:
                     break;
             }
         }
     }
-    public static void create(String table, String columns){
-        controller.conectar();
-        //String columns = "shuttle_name,mass,capacity,engines,thrust";
+    public static String[] createSpaceShip (String columns){
         String[] inputs = columns.split(",");
-        String values = "'";
+        String[] values =  new String[inputs.length];
         for (int i =0 ;i<inputs.length;i++){
             System.out.println("Enter "+inputs[i]+": ");
-            values+=console.readLine();
+            values[i]=console.readLine();
+        }
+        return values;
+    }
+    public static void create(String table, String columns,SpaceShip machine){
+        controller.conectar();
+        //String columns = "shuttle_name,mass,capacity,engines,thrust";
+        //String[] inputs = columns.split(",");
+        //String[] values =  new String[inputs.length];
+        String values = machine.toCSV();
+        /*for (int i =0 ;i<inputs.length;i++){
+            System.out.println("Enter "+inputs[i]+": ");
+            //values[i]=console.readLine();
+        }
+        String values = "'";
+        for (int i =0 ;i<inputs.length;i++){
             if (i == 0){
                 values+="',";
             }
@@ -139,6 +165,7 @@ public class Inventory {
                 values+=",";
             }
         }
+        */
         controller.insertValues(table, columns, values);
         controller.desconectar();
         
@@ -156,16 +183,16 @@ public class Inventory {
             consult = console.readLine().toUpperCase().charAt(0);
             switch (consult){
                 case '1':
-                    consult("shuttle","shuttle_name,mass,capacity,engines,thrust");//, "shuttle_name");
+                    consult("shuttle","name,mass,capacity,engines,thrust");//, "shuttle_name");
                     break;
                 case '2':
-                    consult("probe","probe_name,mass,capacity,engines,thrust");
+                    consult("probe","name,mass,capacity,engines,thrust");
                     break;
                 case '3':
-                    consult("spacecraft","spacecraft_name,mass,capacity,engines,thrust");
+                    consult("spacecraft","name,mass,capacity,engines,thrust");
                     break;
                 case '4':
-                    consult("satellite","satellite_name,mass");
+                    consult("satellite","name,mass");
                     break;
                 default:
                     break;
@@ -178,11 +205,14 @@ public class Inventory {
         System.out.println("Enter "+ table+ " name: ");
         String name = console.readLine();
         controller.conectar();
-        String[] datos = controller.getSingleRow("spacefleet."+table, columns, table+"_name", name, null);
+        String[] datos = controller.getSingleRow("spacefleet."+table, columns, "name", name, null);
         String[] inputs = columns.split(",");
-        for (int i =0 ;i<inputs.length;i++){
-            System.out.println(inputs[i]+": "+datos[i]);
-        }
+        if (datos[0] == null)
+            System.out.println("No "+table+ " found. Check for correct spelling or uppercase letters");
+        else 
+            for (int i =0 ;i<inputs.length;i++){
+                System.out.println(inputs[i]+": "+datos[i]);
+            }
     }
 
     public static void findShip(){
@@ -222,10 +252,14 @@ public class Inventory {
         //int i=0;
         controller.conectar();
         for (int i=0;i<multiple.length;i++){
-            String[] results = controller.getColumnValues("spacefleet."+multiple[i],multiple[i]+"_name","spacefleet."+multiple[i]+"."+parameter,data,null);
-            for (int j=0;j<results.length;j++){
-                System.out.println("("+multiple[i]+") "+results[j]);    
-            }
+            String[] results = controller.getColumnValues("spacefleet."+multiple[i],"name","spacefleet."+multiple[i]+"."+parameter,data,null);
+            if (results.length  == 0) //no spaceships found
+                System.out.println("No "+multiple[i]+" found with this criterium");
+            else
+                System.out.println(results.length +" "+multiple[i]+ " found with this criterium:");
+                for (int j=0;j<results.length;j++){
+                    System.out.println("("+multiple[i]+") "+results[j]);    
+                }
         }
         controller.desconectar();
     }

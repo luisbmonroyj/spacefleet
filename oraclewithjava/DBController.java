@@ -282,9 +282,8 @@ public class DBController {
         try{
             String queryString = filterQuery("SELECT "+columnasCSV+" FROM "+dbTable,parametro,dato);
             queryString = orderQuery(queryString,orden);
-            if(this.echoON) System.out.println("1.getTableValues: "+queryString);
             //System.out.println("2.getTableValues: "+queryString);
-            //if(echoON)System.out.println("getTableValues: "+queryString);
+            if(echoON)System.out.println("getTableValues: "+queryString);
             ResultSet rs = sentencia.executeQuery(queryString);
             int j=0;//contador
             while ( rs.next() ){
@@ -306,7 +305,8 @@ public class DBController {
         String salida[] = new String[getColumnCount(dbTable,columnasCSV)];
         if(echoON)System.out.println("getSingleRow: " +orderQuery("SELECT "+ columnasCSV +" FROM "+dbTable+" WHERE "+campo+"= '"+valor+"'",orden));
         try{
-            String tabla[][] = getTableValues(dbTable+" WHERE "+campo+" = '"+valor+"'",columnasCSV,orden);
+            //String tabla[][] = getTableValues(dbTable+" WHERE "+campo+" = '"+valor+"'",columnasCSV,orden);
+            String tabla[][] = getTableValues(dbTable,columnasCSV,campo,valor,null);
             salida = tabla[0];
         }
         catch(Exception e){
@@ -336,7 +336,11 @@ public class DBController {
     
     public String filterQuery(String query,String parametro, String dato){
         if (parametro != null && dato != null)
-            query+=" WHERE "+parametro + " = " + dato;
+            if (parametro.equals("name"))
+                query+=" WHERE "+parametro + " = '" + dato+"'";
+            else
+                query+=" WHERE "+parametro + " = " + dato;
+
         return query;
     }
     public String orderQuery(String query,String orden){

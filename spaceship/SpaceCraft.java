@@ -9,7 +9,8 @@ public class SpaceCraft extends SpaceShip{
     
     //constructors
     public SpaceCraft(){}
-    public SpaceCraft (double mass,double capacity,double thrust,int engines){
+    public SpaceCraft (String name, double mass,double capacity,double thrust,int engines){
+        setName(name);
         setMass(mass);
         setCapacity(capacity);
         setThrust(thrust);
