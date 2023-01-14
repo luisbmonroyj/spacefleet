@@ -9,11 +9,11 @@ public class Satellite extends SpaceShip{
     
     //constructors
     public Satellite(){}
-    public Satellite (double mass,double capacity,double thrust){
+    public Satellite (double mass){//,double capacity,double thrust){
         setMass(mass);
-        setCapacity(capacity);
-        setThrust(thrust);
-        setEngines(0);
+        //setCapacity(capacity);
+        //setThrust(thrust);
+        //setEngines(0);
     }
 
 

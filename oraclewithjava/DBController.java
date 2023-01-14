@@ -21,8 +21,8 @@ public class DBController {
     static boolean conectado;
     static boolean echoON;
     
-    public DBController(boolean echoON){
-        this.echoON = echoON; 
+    public DBController(boolean echo){
+        this.echoON = echo; 
         //it is the boolean parameter for the implementation, if true, prints all the queries in the terminal
         //it helps debugging errors in the queries, it's easy to copy them to a SQL manager
     }
@@ -30,6 +30,7 @@ public class DBController {
     public static boolean conectar() {
         //driver initializing
         conectado = false;
+        /*
         try {
             Class.forName(Properties.DATABASE_DRIVER);
             if(echoON)System.out.println("JDBC driver found.");
@@ -38,6 +39,7 @@ public class DBController {
             if(echoON)System.out.println(Properties.RDBMS_NAME + " JDBC driver not found.");
             e.printStackTrace();
         }
+        */
         //connecting to database with the stored credentials in Properties.java
         //conectando a la DB con las credenciales guardadas en Properties.java
         try {
@@ -198,6 +200,35 @@ public class DBController {
         return datos;
     }
     
+    //READ returns the values of one column (columna), with a search parameter, optionally ordered by orden
+    //orden is an optional parameter, it can be null
+    public String[] getColumnValues(String dbTable,String columna,String parametro, String dato, String orden){
+        String[] datos;
+        try{
+            String queryString = filterQuery("SELECT "+columna+" FROM "+dbTable,parametro,dato);
+            queryString = orderQuery(queryString,orden);
+            if(echoON) System.out.println("getColumnValues: "+queryString);    
+            ResultSet rs = sentencia.executeQuery(queryString);
+            int j=0;//contador
+            while (rs.next()){
+                    j++;
+            }
+            datos = new String[j];
+            rs = sentencia.executeQuery(queryString);
+            j=0;//contador
+            while (rs.next()){
+                datos[j] = rs.getString(1);    
+                j++;
+            }
+            return datos;
+        }
+        catch (Exception e) { 
+        JOptionPane.showMessageDialog(null,e.getLocalizedMessage());
+        e.printStackTrace();
+        return null;
+    }
+    }
+    
     //READ returns an Object Matrix from a String[] of columns, optionally ordered by orden
     //orden is an optional parameter, it can be null
     public Object[][] getTableValues(String dbTable,String[] columnas,String orden){
@@ -228,6 +259,32 @@ public class DBController {
         try{
             String queryString = orderQuery("SELECT "+columnasCSV+" FROM "+dbTable,orden);
             if(echoON)System.out.println("getTableValues: "+queryString);
+            ResultSet rs = sentencia.executeQuery(queryString);
+            int j=0;//contador
+            while ( rs.next() ){
+                for (int i=0;i<tabla[0].length;i++){
+                    tabla[j][i] = (rs.getString(i+1));
+                }
+                j++;
+            }
+        }
+        catch (Exception e) { 
+            JOptionPane.showMessageDialog(null,e.getLocalizedMessage() );
+            e.printStackTrace();
+        }
+        return tabla;
+    }
+    
+    //READ returns a String[][] from a CSV (comma separated values) list of columns, with a search parameter, optionally ordered by orden
+    //orden is an optional parameter, it can be null 
+    public String[][] getTableValues(String dbTable,String columnasCSV,String parametro, String dato, String orden){
+        String[][] tabla = new String[getRowCount(dbTable,columnasCSV)][getColumnCount(dbTable,columnasCSV)];
+        try{
+            String queryString = filterQuery("SELECT "+columnasCSV+" FROM "+dbTable,parametro,dato);
+            queryString = orderQuery(queryString,orden);
+            if(this.echoON) System.out.println("1.getTableValues: "+queryString);
+            //System.out.println("2.getTableValues: "+queryString);
+            //if(echoON)System.out.println("getTableValues: "+queryString);
             ResultSet rs = sentencia.executeQuery(queryString);
             int j=0;//contador
             while ( rs.next() ){
@@ -277,6 +334,11 @@ public class DBController {
         return salida;
     }
     
+    public String filterQuery(String query,String parametro, String dato){
+        if (parametro != null && dato != null)
+            query+=" WHERE "+parametro + " = " + dato;
+        return query;
+    }
     public String orderQuery(String query,String orden){
         if (orden != null)
             query+=" ORDER BY "+orden;
