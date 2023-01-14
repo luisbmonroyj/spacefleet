@@ -70,8 +70,6 @@ public class Inventory {
         String shuttleCSV = "'transbordador',"+transbordador.getCapacity()+","+transbordador.getEngines()+","+transbordador.getThrust()+","+transbordador.getMass();
         System.out.println(values);        
         */
-        
-        */
         char option = 'A';
         while (option != 'X'){
             System.out.println("Enter a number according to your option:");
