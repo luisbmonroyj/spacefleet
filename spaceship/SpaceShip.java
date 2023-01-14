@@ -76,24 +76,10 @@ public abstract class SpaceShip implements Movement{
                 break;
         }
     }
-    //this method delivers the values for the persistent layer
+    //this method delivers the values for the persistent layer in a CSV format
     public String toCSV() {
         String csv = "'"+this.getName()+"',"+this.getMass()+","+this.getCapacity()+","+this.getThrust()+","+this.getEngines();
         return csv;
     }
 
-    /*
-    abstract public void setMass (double masa);
-    //masa must be in kilograms
-    abstract public void setCapacity (double capacidad);
-    //capacidad must be in kilograms
-    abstract public void setThrust (double empuje);
-    //empuje must be in kilograms
-    abstract public void setEngines (int motores);
-    //motores must be integer
-    abstract double getMass ();
-    abstract double getCapacity ();
-    abstract double getThrust ();
-    abstract int getEngines ();
-    */
 }

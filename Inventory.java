@@ -4,71 +4,12 @@ import oraclewithjava.*;
 
 import spaceship.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
-
 public class Inventory {
     static Console console = System.console();
     static DBController controller = new DBController(false);
                 
     public static void main(String[] args) {
-        //Console console = System.console();
-        
-        /*
-        Connection conn3 = null;
-        try{
-            Properties parameters = new Properties();
-            parameters.put("user", oraclewithjava.Properties.DATABASE_USER);
-            parameters.put("password", oraclewithjava.Properties.DATABASE_PASSWORD);
- 
-            //conn3 = DriverManager.getConnection(dbURL3, parameters);
-            conn3 = DriverManager.getConnection(oraclewithjava.Properties.DATABASE_URL, parameters);
-            if (conn3 != null) {
-                System.out.println("Connected to database #3");
-            }
- 
-        }
-        catch (SQLException ex) {
-            ex.printStackTrace();
-        } 
-        */      
-        
-        /* 
-        Shuttle saturnoV = new Shuttle();
-        saturnoV.setCapacity(118000.0);
-        saturnoV.setEngines(2);
-        saturnoV.setThrust(3500000.0);
-        saturnoV.setMass(2900000);
-        String shuttleCSV = "'saturnoV',"+saturnoV.getCapacity()+","+saturnoV.getEngines()+","+saturnoV.getThrust()+","+saturnoV.getMass();
-        System.out.println(shuttleCSV);        
-
-        controller.insertValues("spacefleet.shuttle", "shuttle_name,capacity,engines,thrust,mass", shuttleCSV);
-        Shuttle energia = new Shuttle (2400000.0, 100000, 3060000, 3);
-
-        Probe pioneerX = new Probe();
-        pioneerX.setThrust(45.39);
-
-        Probe marinerX = new Probe();
-        marinerX.setMass(1093.0);
-        marinerX.setThrust(65.79); 
-
-        System.out.println("Capacidad SaturnoV: "+saturnoV.getCapacity()+" kg");
-        System.out.println("Masa Energia: " +energia.getMass()+" kg");
-        System.out.println("Empuje de PioneerX: "+pioneerX.getThrust()+" kg");
-        System.out.println("masa de MarinerX: "+ marinerX.getMass()+" kg");
-        //System.out.println("Introduzca una opcion");
-
-        /*
-        Shuttle transbordador = new Shuttle();
-        transbordador.setCapacity(118000.0);
-        transbordador.setEngines(2);
-        transbordador.setThrust(3500000.0);
-        transbordador.setMass(2900000);
-        String shuttleCSV = "'transbordador',"+transbordador.getCapacity()+","+transbordador.getEngines()+","+transbordador.getThrust()+","+transbordador.getMass();
-        System.out.println(values);        
-        */
+        //main menu
         char option = 'A';
         while (option != 'X'){
             System.out.println("Enter a number according to your option:");
@@ -92,11 +33,12 @@ public class Inventory {
                     break;
             }
         }
-        
     }
     public static void createShip(){
+        //menu 1. create a spaceship
         char create = 'A';
         while (create != 'X'){
+            //this string has the most common names of columns/properties of the tables/class
             String columns = "name,mass,capacity,thrust,engines";
             System.out.println("Enter a number according to your option:");
             System.out.println("1. Create a shuttle");    
@@ -109,11 +51,12 @@ public class Inventory {
             switch (create){
                 case '1':
                     String[] values = createSpaceShip(columns);
+                    //creating an object with the values the user entered in createSpaceShip
                     Shuttle shuttle = new Shuttle(values[0],Double.parseDouble(values[1]),Double.parseDouble(values[2]),Double.parseDouble(values[3]),Integer.parseInt(values[4]));
-                    if (shuttle != null)
+                    if (shuttle != null)//if the instance of shuttle is valid, store it in the DB
                         create("spacefleet.shuttle", columns,shuttle);
                     break;
-                case '2':
+                case '2': //the same process repeats 
                     values = createSpaceShip(columns);
                     Probe probe = new Probe(values[0],Double.parseDouble(values[1]),Double.parseDouble(values[2]),Double.parseDouble(values[3]),Integer.parseInt(values[4]));
                     if (probe != null)
@@ -126,7 +69,7 @@ public class Inventory {
                         create("spacefleet.spacecraft",columns,craft);
                     break;
                 case '4':
-                    columns = "name,mass";
+                    columns = "name,mass";//the amount of data for satellite changes, an update fo columns must be made
                     String satelliteValues[] = createSpaceShip(columns);
                     Satellite satellite = new Satellite(satelliteValues[0],Double.parseDouble(satelliteValues[1]));
                     if (satellite != null)
@@ -137,6 +80,8 @@ public class Inventory {
             }
         }
     }
+    //createSpaceship takes a CSV columns, splits them, asks the user for data according to the type of spaceship
+    //and returns a String[] with those data
     public static String[] createSpaceShip (String columns){
         String[] inputs = columns.split(",");
         String[] values =  new String[inputs.length];
@@ -148,29 +93,12 @@ public class Inventory {
     }
     public static void create(String table, String columns,SpaceShip machine){
         controller.conectar();
-        //String columns = "shuttle_name,mass,capacity,engines,thrust";
-        //String[] inputs = columns.split(",");
-        //String[] values =  new String[inputs.length];
         String values = machine.toCSV();
-        /*for (int i =0 ;i<inputs.length;i++){
-            System.out.println("Enter "+inputs[i]+": ");
-            //values[i]=console.readLine();
-        }
-        String values = "'";
-        for (int i =0 ;i<inputs.length;i++){
-            if (i == 0){
-                values+="',";
-            }
-            else if (i != inputs.length-1){
-                values+=",";
-            }
-        }
-        */
-        controller.insertValues(table, columns, values);
-        controller.desconectar();
-        
+        controller.insertValues(table, columns, values);//first DB method used, create a new registry
+        controller.desconectar();//connects and disconnects for security reasons
     }
     public static void consultShip(){
+        //In this option, the user must know the name of the spaceship to get all its information
         char consult = 'A';
         while (consult != 'X'){
             System.out.println("Enter a number according to your option:");
@@ -183,7 +111,7 @@ public class Inventory {
             consult = console.readLine().toUpperCase().charAt(0);
             switch (consult){
                 case '1':
-                    consult("shuttle","name,mass,capacity,engines,thrust");//, "shuttle_name");
+                    consult("shuttle","name,mass,capacity,engines,thrust");
                     break;
                 case '2':
                     consult("probe","name,mass,capacity,engines,thrust");
@@ -198,24 +126,27 @@ public class Inventory {
                     break;
             }
         }
-        controller.desconectar();   
+        
     }
     public static void consult(String table,String columns){
-        //String columns = "shuttle_name,mass,capacity,engines,thrust";
+        //this method queries the name of spaceship in the database, and returns all its properties
         System.out.println("Enter "+ table+ " name: ");
         String name = console.readLine();
         controller.conectar();
+        //getSingleRow is used because there must be one registry, according to primary key constraints
         String[] datos = controller.getSingleRow("spacefleet."+table, columns, "name", name, null);
         String[] inputs = columns.split(",");
-        if (datos[0] == null)
+        if (datos[0] == null)//no data available and possible reasons
             System.out.println("No "+table+ " found. Check for correct spelling or uppercase letters");
         else 
             for (int i =0 ;i<inputs.length;i++){
                 System.out.println(inputs[i]+": "+datos[i]);
             }
+        controller.desconectar();   
     }
 
     public static void findShip(){
+        //this option delivers every spaceship (shuttle, probe, spacecraft or satellite) that has a parameter equal to a value entered by user
         char find = 'A';
         while (find != 'X'){
             System.out.println("Enter a number according to your option:");
@@ -228,10 +159,11 @@ public class Inventory {
             find = console.readLine().toUpperCase().charAt(0);
             switch (find){
                 case '1':
-                    find("shuttle,probe,spacecraft,satellite","mass");//, "shuttle_name");
+                    find("shuttle,probe,spacecraft,satellite","mass");
                     break;
                 case '2':
                     find("shuttle,probe,spacecraft","capacity");
+                    //satellites don't have this parameter
                     break;
                 case '3':
                     find("shuttle,probe,spacecraft","engines");
@@ -246,16 +178,16 @@ public class Inventory {
         controller.desconectar();
     }
     public static void find(String tables,String parameter){
+        //this method finds every registry in the tables with the input parameter (satellites only have mass)
         System.out.println("Enter search value for "+parameter+": ");
         String data = console.readLine();
         String[] multiple = tables.split(",");
-        //int i=0;
         controller.conectar();
         for (int i=0;i<multiple.length;i++){
             String[] results = controller.getColumnValues("spacefleet."+multiple[i],"name","spacefleet."+multiple[i]+"."+parameter,data,null);
             if (results.length  == 0) //no spaceships found
                 System.out.println("No "+multiple[i]+" found with this criterium");
-            else
+            else //one or more spaceships found
                 System.out.println(results.length +" "+multiple[i]+ " found with this criterium:");
                 for (int j=0;j<results.length;j++){
                     System.out.println("("+multiple[i]+") "+results[j]);    
